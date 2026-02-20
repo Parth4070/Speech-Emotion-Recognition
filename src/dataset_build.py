@@ -53,41 +53,46 @@ def extract_mfcc(file_path, max_len=130):
 def build_dataset(data_path):
     X = []
     y = []
+    actors = []
 
-    for root, _, files in os.walk(data_path):
-        for file in tqdm(files):
+    for actor_folder in os.listdir(data_path):
+        actor_path = os.path.join(data_path, actor_folder)
+
+        if not os.path.isdir(actor_path):
+            continue
+
+        actor_id = actor_folder 
+
+        for file in os.listdir(actor_path):
             if file.endswith(".wav"):
 
                 emotion = extract_emotion(file)
-
-                # Skip unwanted emotions
                 if emotion is None:
                     continue
 
-                file_path = os.path.join(root, file)
-
+                file_path = os.path.join(actor_path, file)
                 mfcc = extract_mfcc(file_path)
 
                 X.append(mfcc)
                 y.append(emotion)
+                actors.append(actor_id)
 
-    return np.array(X), np.array(y)
+    return np.array(X), np.array(y), np.array(actors)
 
 if __name__ == "__main__":
 
     data_path = "../data/raw"
 
-    X, y = build_dataset(data_path)
+    X, y, actors = build_dataset(data_path)
 
     print("Feature shape:", X.shape)
     print("Labels shape:", y.shape)
 
-    # Create processed directory if not exists
     processed_path = "../data/processed"
     os.makedirs(processed_path, exist_ok=True)
 
-    # Save features
     np.save(os.path.join(processed_path, "X.npy"), X)
     np.save(os.path.join(processed_path, "y.npy"), y)
+    np.save(os.path.join(processed_path, "actors.npy"), actors)
 
     print("Saved X and y successfully.")
