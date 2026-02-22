@@ -1,11 +1,14 @@
 import numpy as np
+import os
 from sklearn.preprocessing import LabelEncoder
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 encoder = LabelEncoder()
 
-X = np.load("../data/processed/X.npy")
-y = np.load("../data/processed/y.npy")
-actors = np.load("../data/processed/actors.npy")
+X = np.load(os.path.join(BASE_DIR, "data", "processed", "X.npy"))
+y = np.load(os.path.join(BASE_DIR, "data", "processed", "y.npy"))
+actors = np.load(os.path.join(BASE_DIR, "data", "processed", "actors.npy"))
 
 unique_actors = np.unique(actors)
 np.random.seed(42)
@@ -29,7 +32,9 @@ y_train = encoder.fit_transform(y_train)
 y_test = encoder.transform(y_test)
 
 # print(X_train.shape, y_train.shape)
-np.save("../data/train/X_train.npy", X_train)
-np.save("../data/train/y_train.npy", y_train)
-np.save("../data/train/X_test.npy", X_test)
-np.save("../data/train/y_test.npy", y_test)
+train_dir = os.path.join(BASE_DIR, "data", "train")
+os.makedirs(train_dir, exist_ok=True)
+np.save(os.path.join(train_dir, "X_train.npy"), X_train)
+np.save(os.path.join(train_dir, "y_train.npy"), y_train)
+np.save(os.path.join(train_dir, "X_test.npy"), X_test)
+np.save(os.path.join(train_dir, "y_test.npy"), y_test)

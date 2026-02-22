@@ -3,6 +3,8 @@ import numpy as np
 import librosa
 from tqdm import tqdm
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 EMOTION_MAP = {
     "01": "neutral",
     "03": "happy",
@@ -81,14 +83,14 @@ def build_dataset(data_path):
 
 if __name__ == "__main__":
 
-    data_path = "../data/raw"
+    data_path = os.path.join(BASE_DIR, "data", "raw")
 
     X, y, actors = build_dataset(data_path)
 
     print("Feature shape:", X.shape)
     print("Labels shape:", y.shape)
 
-    processed_path = "../data/processed"
+    processed_path = os.path.join(BASE_DIR, "data", "processed")
     os.makedirs(processed_path, exist_ok=True)
 
     np.save(os.path.join(processed_path, "X.npy"), X)
