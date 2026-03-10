@@ -2,7 +2,8 @@ import os
 import numpy as np
 import keras_tuner as kt
 from keras.models import Sequential
-from keras.layers import LSTM, Dense, Dropout, Input
+from keras.layers import LSTM, Dense, Dropout, Input, Bidirectional
+from keras.regularizers import l2
 import keras
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,21 +20,21 @@ def build_model(hp, timesteps, features, num_classes):
     model.add(Input(shape=(timesteps , features)))
 
     # tuning
-    units = hp.Choice("lstm_units", [32, 64, 128])
-    model.add(LSTM(units=units, return_sequences=True))
+    units = hp.Choice("lstm_units", [32])
+    model.add(Bidirectional(LSTM(units=units, return_sequences=True, kernel_regularizer=l2(0.001))))
 
-    dropout_rate = hp.Choice("dropout", [0.2, 0.3, 0.5])
+    dropout_rate = hp.Choice("dropout", [0.4])
     model.add(Dropout(dropout_rate))
 
-    model.add(LSTM(units=units // 2))
+    model.add(Bidirectional(LSTM(units=units // 2, kernel_regularizer=l2(0.001))))
     model.add(Dropout(dropout_rate))
 
-    model.add(Dense(num_classes, activation="softmax"))
+    model.add(Dense(num_classes, activation="softmax"))     
 
-    lr = hp.Choice("learning_rate", [1e-3, 5e-4, 1e-4])
+    lr = hp.Choice("learning_rate", [ 5e-4 ])
 
     model.compile(
-        optimizer=keras.optimizers.Adam(learning_rate=lr),
+        optimizer=keras.optimizers.Adam(learning_rate=lr, clipnorm=1.0),
         loss="sparse_categorical_crossentropy",
         metrics=['accuracy']
     )
