@@ -1,0 +1,2 @@
+# This specifies the Python version to use on Streamlit Community Cloud
+python_version = "3.10"
