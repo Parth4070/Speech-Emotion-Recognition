@@ -1,13 +1,10 @@
 numpy
 librosa
 streamlit
-keras
+keras==3.13.2
 tensorflow-cpu
 soundfile
 h5py
-
 pymongo==4.10.1
 python-dotenv==1.0.1
-
-pymongo
-dotenv
+keras-tuner==1.4.8
