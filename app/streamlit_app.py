@@ -27,15 +27,36 @@ def load_ser_model():
 
 @st.cache_data
 def load_training_stats():
-    """Load training data statistics for standardization."""
-    train_data_path = os.path.join(BASE_DIR, "data", "train", "X_train.npy")
-    if not os.path.exists(train_data_path):
-        st.error(f"Error: Training data not found at {train_data_path}. Ensure you have run data generation.")
+    """Fetch training data statistics from MongoDB for standardization."""
+    from pymongo import MongoClient
+
+    # When deployed on Streamlit Cloud, you set MONGO_URI in the Secrets management UI
+    # Locally, it will read it from a .streamlit/secrets.toml file if created
+    if "MONGO_URI" not in st.secrets:
+        st.error("Error: Database connection secret (MONGO_URI) not found in Streamlit Secrets.")
         return None, None
-    X_train = np.load(train_data_path)
-    mean = np.mean(X_train, axis=(0, 1), keepdims=True)
-    std = np.std(X_train, axis=(0, 1), keepdims=True)
-    return mean, std
+
+    try:
+        client = MongoClient(st.secrets["MONGO_URI"], serverSelectionTimeoutMS=5000)
+        db = client["SpeechEmotionAI"]
+        collection = db["ModelStats"]
+
+        # Fetch the pre-computed document we uploaded
+        doc = collection.find_one({"_id": "standardization_params"})
+        
+        if not doc:
+            st.error("Error: Standardization parameters not found in MongoDB database.")
+            return None, None
+            
+        # Convert nested lists back into numpy arrays exactly as the model expects them
+        mean = np.array(doc["mean"])
+        std = np.array(doc["std"])
+        
+        return mean, std
+        
+    except Exception as e:
+        st.error(f"Error connecting to MongoDB: {e}")
+        return None, None
 
 def extract_mfcc(audio_bytes, max_len=130):
     """
