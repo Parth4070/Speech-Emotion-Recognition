@@ -6,7 +6,7 @@ import streamlit as st
 
 # Suppress verbose TensorFlow logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-from tensorflow.keras.models import load_model
+from keras.models import load_model
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -23,7 +23,7 @@ def load_ser_model():
     if not os.path.exists(model_path):
         st.error(f"Error: Model not found at {model_path}. Ensure you have run training.")
         return None
-    return load_model(model_path)
+    return load_model(model_path, compile=False)
 
 @st.cache_data
 def load_training_stats():
