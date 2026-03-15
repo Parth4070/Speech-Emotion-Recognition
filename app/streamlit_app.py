@@ -6,7 +6,7 @@ import streamlit as st
 
 # Suppress verbose TensorFlow logging
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
-from keras.models import load_model
+from tensorflow.keras.models import load_model
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
