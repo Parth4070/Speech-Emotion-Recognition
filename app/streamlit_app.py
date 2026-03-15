@@ -23,7 +23,16 @@ def load_ser_model():
     if not os.path.exists(model_path):
         st.error(f"Error: Model not found at {model_path}. Ensure you have run training.")
         return None
-    return load_model(model_path, compile=False)
+    try:
+        # standard load model, adding safe_mode=False to bypass lambda or strict JSON restrictions
+        return load_model(model_path, compile=False, safe_mode=False)
+    except TypeError as e:
+        st.error(f"Failed to load model due to a TypeError. This usually happens when Keras versions mismatch. Details: {e}")
+        # fallback to manually fixing missing kwargs if needed, or return None
+        return None
+    except Exception as e:
+        st.error(f"Unexpected error loading model: {e}")
+        return None
 
 @st.cache_data
 def load_training_stats():
