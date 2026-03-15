@@ -23,7 +23,7 @@ def load_ser_model():
     if not os.path.exists(model_path):
         st.error(f"Error: Model not found at {model_path}. Ensure you have run training.")
         return None
-    return load_model(model_path)
+    return load_model(model_path, compile=False)
 
 @st.cache_data
 def load_training_stats():

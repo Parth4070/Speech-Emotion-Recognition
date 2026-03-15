@@ -2,7 +2,7 @@ numpy
 scipy
 librosa==0.10.2
 streamlit
-tensorflow==2.16.1
+tensorflow==2.21.0
 soundfile
 h5py
 pymongo
