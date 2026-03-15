@@ -134,4 +134,4 @@ def main():
                     st.progress(float(confidence), text=f"Confidence: {confidence * 100:.2f}%")
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
